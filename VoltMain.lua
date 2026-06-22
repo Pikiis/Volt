@@ -278,7 +278,7 @@ local DIMMED = Color3.fromRGB(130, 130, 145)
 local function buildUI()
     -- Cleanup
     safeCall(function()
-        local old = CoreGui:FindFirstChild("VoltUI")
+        local old = LocalPlayer.PlayerGui:FindFirstChild("VoltUI")
         if old then old:Destroy() end
     end)
 
@@ -288,9 +288,8 @@ local function buildUI()
     ScreenGui.DisplayOrder   = 999
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    -- Delta-safe parent
-    local ok = pcall(function() ScreenGui.Parent = CoreGui end)
-    if not ok then ScreenGui.Parent = LocalPlayer.PlayerGui end
+    -- Delta: langsung PlayerGui, CoreGui restricted
+    ScreenGui.Parent = LocalPlayer.PlayerGui
 
     -- ==========================================
     --   LOADER SCREEN
