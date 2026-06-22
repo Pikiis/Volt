@@ -9,10 +9,13 @@
 -- =============================================
 local Players      = game:GetService("Players")
 local RunService   = game:GetService("RunService")
-local TweenService = game:GetService("TweenService")
 local HttpService  = game:GetService("HttpService")
 local CoreGui      = game:GetService("CoreGui")
 local LocalPlayer  = Players.LocalPlayer
+
+-- TweenService: safe load, fallback instant jika nil
+local TweenService = nil
+pcall(function() TweenService = game:GetService("TweenService") end)
 
 -- =============================================
 --   [2] ANTI-DUPLICATE
@@ -67,7 +70,14 @@ end
 
 local function tween(obj, props, t)
     safeCall(function()
-        TweenService:Create(obj, TweenInfo.new(t or 0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), props):Play()
+        if TweenService then
+            TweenService:Create(obj, TweenInfo.new(t or 0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), props):Play()
+        else
+            -- Fallback: langsung set property (instant, no animation)
+            for k, v in pairs(props) do
+                pcall(function() obj[k] = v end)
+            end
+        end
     end)
 end
 
